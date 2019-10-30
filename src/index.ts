@@ -69,7 +69,12 @@ export async function startNotarize(opts: NotarizeStartOptions): Promise<Notariz
 
     const uuidMatch = /\nRequestUUID = (.+?)\n/g.exec(result.output);
     if (!uuidMatch) {
-      throw new Error(`Failed to find request UUID in output:\n\n${result.output}`);
+      // throw new Error(`Failed to find request UUID in output:\n\n${result.output}`);
+      d(
+        `Failed to check status of notarization request, retrying in 30 seconds: ${opts.appleId}\n\n${result.output}`,
+      );
+      await delay(30000);
+      return startNotarize(opts);
     }
 
     d('found UUID:', uuidMatch[1]);
